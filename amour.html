@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mon cœur… ❤️</title>
+
+    <style>
+        :root {
+            --pink1: #ff9ecf;
+            --pink2: #ffd6ec;
+            --accent: #ff3f9d;
+            --accent2: #ff6fb7;
+            --text: #222;
+            --muted: #666;
+            --card: #ffffff;
+            --shadow: 0 16px 40px rgba(0, 0, 0, .18);
+            --radius: 22px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            background:
+                radial-gradient(900px 500px at 20% 20%, #ffffff66 0%, transparent 55%),
+                linear-gradient(120deg, var(--pink1), var(--pink2));
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        /* petits coeurs en fond */
+        .hearts {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: .18;
+            filter: blur(.2px);
+        }
+
+        .hearts span {
+            position: absolute;
+            font-size: 18px;
+            animation: float 6s linear infinite;
+        }
+
+        @keyframes float {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            15% {
+                opacity: 1;
+            }
+
+            to {
+                transform: translateY(-110vh);
+                opacity: 0;
+            }
+        }
+
+        .card {
+            width: min(560px, 100%);
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 28px 20px 22px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 900;
+            font-size: 26px;
+            margin: 0;
+        }
+
+        .subtitle {
+            margin: 10px auto 0;
+            text-align: center;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.4;
+            max-width: 42ch;
+        }
+
+        .question {
+            margin: 18px auto 14px;
+            text-align: center;
+            font-weight: 900;
+            font-size: 22px;
+            color: var(--accent);
+            line-height: 1.25;
+        }
+
+        /* zone où les boutons “vivent” (surtout le Oui qui fuit) */
+        .arena {
+            position: relative;
+            margin: 14px auto 0;
+            height: 140px;
+            width: min(520px, 100%);
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-radius: 18px;
+            background: linear-gradient(180deg, #fff7fb, #ffffff);
+            border: 1px solid #ffd7ea;
+        }
+
+        button {
+            border: none;
+            cursor: pointer;
+            padding: 12px 20px;
+            font-weight: 900;
+            border-radius: 999px;
+            font-size: 16px;
+            user-select: none;
+            touch-action: manipulation;
+            transition: transform .12s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        button:active {
+            transform: scale(.98);
+        }
+
+        #non {
+            background: transparent;
+            border: 2px dashed #ff86c6;
+            color: #333;
+        }
+
+        /* Le Oui est en position absolue pour pouvoir bouger */
+        #oui {
+            position: absolute;
+            right: 18px;
+            bottom: 18px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: #fff;
+            box-shadow: 0 12px 22px rgba(255, 63, 157, .25);
+        }
+
+        .hint {
+            margin: 10px 0 0;
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .message {
+            margin-top: 16px;
+            display: none;
+            background: #fff0f7;
+            border: 1px solid #ffd0e6;
+            border-radius: 18px;
+            padding: 14px 14px;
+            animation: pop .18s ease-out;
+        }
+
+        @keyframes pop {
+            from {
+                transform: translateY(8px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .message h2 {
+            margin: 0 0 8px;
+            font-size: 16px;
+            color: #222;
+        }
+
+        .message p {
+            margin: 0;
+            color: #333;
+            line-height: 1.45;
+            font-size: 14px;
+            white-space: pre-line;
+        }
+
+        .actions2 {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .copy {
+            background: #111;
+            color: #fff;
+            box-shadow: none;
+        }
+
+        .reset {
+            background: #ededed;
+            color: #111;
+            box-shadow: none;
+        }
+
+        @media (max-width: 420px) {
+            .question {
+                font-size: 20px;
+            }
+
+            .arena {
+                height: 150px;
+            }
+
+            button {
+                font-size: 15px;
+                padding: 12px 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- coeurs flottants -->
+    <div class="hearts" id="hearts"></div>
+
+    <div class="card">
+        <h1 class="title">💌 Mon cœur…</h1>
+        <p class="subtitle">J’ai une question super importante… 🥺</p>
+
+        <div class="question">
+            Veux-tu vraiment m’abandonner,<br />
+            même pas à mi-chemin ? 😔
+        </div>
+
+        <div class="arena" id="arena">
+            <button id="non">Non 😌</button>
+            <button id="oui" aria-label="Oui">Oui 🥲</button>
+        </div>
+
+        <div class="hint">Astuce : essaye de cliquer sur “Oui”… 😏</div>
+
+        <div class="message" id="loveBox">
+            <h2>❤️ Message</h2>
+            <p id="loveText"></p>
+
+            <div class="actions2">
+                <button class="copy" id="copyBtn">Copier 📩</button>
+                <button class="reset" id="resetBtn">Revenir</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Texte d'amour (tu peux personnaliser) ---
+        const LOVE_MESSAGE =
+            `Peu importe ce que tu choisis…
+Moi, je te choisis toujours. ❤️
+
+Je ne veux pas qu’on se perde à cause d’un moment difficile.
+Je tiens à toi, profondément.
+
+Viens… on se parle calmement.
+Je t’aime.`;
+
+        const arena = document.getElementById("arena");
+        const oui = document.getElementById("oui");
+        const non = document.getElementById("non");
+
+        const loveBox = document.getElementById("loveBox");
+        const loveText = document.getElementById("loveText");
+        const copyBtn = document.getElementById("copyBtn");
+        const resetBtn = document.getElementById("resetBtn");
+
+        // Affiche message quand elle clique sur NON
+        non.addEventListener("click", () => {
+            loveText.textContent = LOVE_MESSAGE;
+            loveBox.style.display = "block";
+            loveBox.scrollIntoView({ behavior: "smooth", block: "center" });
+        });
+
+        // Empêche “Oui” d’être cliqué (même si elle y arrive)
+        oui.addEventListener("click", (e) => {
+            e.preventDefault();
+            moveOui(); // et on le fait bouger quand même 😅
+        });
+
+        // Fonction de déplacement propre (reste dans la zone arena)
+        function moveOui() {
+            const a = arena.getBoundingClientRect();
+            const b = oui.getBoundingClientRect();
+
+            // limites internes
+            const pad = 10;
+            const maxX = a.width - b.width - pad;
+            const maxY = a.height - b.height - pad;
+
+            // positions aléatoires
+            const x = pad + Math.random() * Math.max(0, maxX - pad);
+            const y = pad + Math.random() * Math.max(0, maxY - pad);
+
+            // applique dans l'espace de l'arena
+            oui.style.left = x + "px";
+            oui.style.top = y + "px";
+            oui.style.right = "auto";
+            oui.style.bottom = "auto";
+        }
+
+        // PC: dès qu'on approche la souris
+        oui.addEventListener("pointerenter", moveOui);
+        oui.addEventListener("mouseover", moveOui);
+
+        // Mobile: dès qu’on pose le doigt (ou approche)
+        oui.addEventListener("touchstart", (e) => {
+            e.preventDefault(); // évite le "click" derrière
+            moveOui();
+        }, { passive: false });
+
+        // Copier le message
+        copyBtn.addEventListener("click", async () => {
+            try {
+                await navigator.clipboard.writeText(LOVE_MESSAGE);
+                copyBtn.textContent = "Copié ✅";
+                setTimeout(() => copyBtn.textContent = "Copier 📩", 1200);
+            } catch (err) {
+                // fallback
+                const ta = document.createElement("textarea");
+                ta.value = LOVE_MESSAGE;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand("copy");
+                document.body.removeChild(ta);
+                copyBtn.textContent = "Copié ✅";
+                setTimeout(() => copyBtn.textContent = "Copier 📩", 1200);
+            }
+        });
+
+        // Revenir (cache la box)
+        resetBtn.addEventListener("click", () => {
+            loveBox.style.display = "none";
+        });
+
+        // Position initiale : “Oui” en bas à droite
+        function resetOuiPosition() {
+            oui.style.left = "auto";
+            oui.style.top = "auto";
+            oui.style.right = "18px";
+            oui.style.bottom = "18px";
+        }
+        window.addEventListener("resize", resetOuiPosition);
+        resetOuiPosition();
+
+        // --- coeurs flottants en fond (léger) ---
+        const hearts = document.getElementById("hearts");
+        const count = 14;
+        for (let i = 0; i < count; i++) {
+            const s = document.createElement("span");
+            s.textContent = "💗";
+            s.style.left = Math.random() * 100 + "vw";
+            s.style.animationDelay = (Math.random() * 5) + "s";
+            s.style.fontSize = (12 + Math.random() * 16) + "px";
+            hearts.appendChild(s);
+        }
+    </script>
+</body>
+
+</html>
